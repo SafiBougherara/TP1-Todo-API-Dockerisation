@@ -7,28 +7,44 @@ API REST de gestion de tâches, dockerisée avec Node.js 18 et PostgreSQL 15.
 - **Runtime** : Node.js 18 (alpine)
 - **Framework** : Express 4
 - **Base de données** : PostgreSQL 15
-- **Conteneurisation** : Docker
+- **Conteneurisation** : Docker + Docker Compose
 
 ---
 
 ## Lancer le projet
 
-### 1. Pré-requis
+### Méthode recommandée — Docker Compose ⭐
 
-- [Docker Desktop](https://www.docker.com/get-started) installé et lancé
-- Node.js 18+ (pour le développement local)
-
-### 2. Variables d'environnement
+Lance toute la stack (API + PostgreSQL) en une seule commande :
 
 ```bash
-cp .env.example .env
+# 1. Créer le volume external requis (une seule fois)
+docker volume create todo-logs
+
+# 2. Lancer la stack complète en arrière-plan
+docker compose up -d
 ```
 
-Le `.env` par défaut est déjà configuré pour fonctionner avec le container Postgres ci-dessous.
+L'API est disponible sur **http://localhost:3000**
 
-### 3. Lancer PostgreSQL via Docker
+**Commandes principales :**
 
 ```bash
+docker compose up -d       # Lancer tous les services (détaché)
+docker compose down        # Stopper et supprimer les containers
+docker compose build       # Rebuilder l'image API après modif du code
+docker compose logs -f api # Suivre les logs en temps réel
+```
+
+---
+
+### Méthode alternative — En local (sans compose)
+
+```bash
+# 1. Variables d'environnement
+cp .env.example .env
+
+# 2. Lancer PostgreSQL seul
 docker run -d \
   --name todo-postgres \
   -e POSTGRES_DB=todo_db \
@@ -36,38 +52,51 @@ docker run -d \
   -e POSTGRES_PASSWORD=todo_pass \
   -p 5432:5432 \
   postgres:15-alpine
-```
 
-### 4. Lancer l'API en local
-
-```bash
+# 3. Lancer l'API Node.js
 npm install
 npm start
 ```
 
-L'API est disponible sur **http://localhost:3000**
-
 ---
 
-## Construire et lancer avec Docker
+## Volumes et persistance
+
+La stack utilise deux **volumes nommés** gérés par Docker :
+
+| Volume | Rôle |
+|---|---|
+| `postgres-data` | Données PostgreSQL — persistent après `docker compose down` |
+| `api-logs` | Logs de l'API — persistent après redémarrage |
+| `todo-logs` | Volume external partagé entre containers (exercice volumes) |
+
+### Tester la persistance
 
 ```bash
-# Build de l'image
-docker build -t todo-api .
+# 1. Lancer la stack et créer une tâche
+docker compose up -d
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Tâche persistante","status":"todo"}'
 
-# Lancer le container (en supposant que Postgres tourne déjà)
-docker run -p 3000:3000 \
-  --env-file .env \
-  -e DB_HOST=host.docker.internal \
-  todo-api
+# 2. Stopper TOUT (containers supprimés, volumes conservés)
+docker compose down
+
+# 3. Relancer
+docker compose up -d
+
+# 4. Vérifier que les données sont toujours là 😈
+curl http://localhost:3000/api/tasks
 ```
+
+> ⚠️ `docker compose down -v` supprime aussi les volumes — les données sont perdues.
 
 ---
 
 ## Endpoints de l'API
 
 | Méthode | Route              | Description              |
-|---------|--------------------|--------------------------|
+|---------|--------------------|--------------------------| 
 | GET     | `/health`          | Health check             |
 | GET     | `/api/tasks`       | Lister toutes les tâches |
 | GET     | `/api/tasks/:id`   | Voir une tâche           |
@@ -125,7 +154,8 @@ curl -X DELETE http://localhost:3000/api/tasks/1
 
 ```bash
 docker ps                          # Voir les containers actifs
-docker stop todo-postgres          # Stopper Postgres
-docker rm todo-postgres            # Supprimer le container
+docker compose ps                  # Voir les services du compose
+docker volume ls                   # Lister les volumes
+docker volume inspect postgres-data # Inspecter un volume
 docker images                      # Voir les images
 ```
