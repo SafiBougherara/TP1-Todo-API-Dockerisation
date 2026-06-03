@@ -159,3 +159,12 @@ docker volume ls                   # Lister les volumes
 docker volume inspect postgres-data # Inspecter un volume
 docker images                      # Voir les images
 ```
+
+
+<img width="740" height="157" alt="{F572EF56-3EFD-47D2-A8EA-0353DD56F292}" src="https://github.com/user-attachments/assets/b5cdc9f7-53b1-4c4d-bcc4-95450f5d01bb" />
+
+<img width="1081" height="697" alt="{3B262EEC-E108-4967-8808-9CCEBEF69974}" src="https://github.com/user-attachments/assets/eefa35ea-fdd1-4d0b-bd13-268865c73ae6" />
+
+<img width="1114" height="520" alt="{BDFC6BC7-5AD6-4C73-B52B-295424E281BB}" src="https://github.com/user-attachments/assets/bea8cc0b-4ebe-4800-9b8f-18554d1c4d12" />
+
+<img width="1120" height="752" alt="{B4542457-FFD8-470D-8C6F-FEF63F396014}" src="https://github.com/user-attachments/assets/003763c7-3606-47e0-914b-1c25bc7db35b" />
