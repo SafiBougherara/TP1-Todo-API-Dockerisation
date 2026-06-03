@@ -1,0 +1,47 @@
+# ── Todo App — Stack complète ─────────────────────────────────────────────────
+# Usage :
+#   docker compose up -d       → lancer tous les services en arrière-plan
+#   docker compose down        → stopper et supprimer les containers
+#   docker compose build       → (re)construire l'image de l'API
+#   docker compose logs -f api → suivre les logs de l'API
+
+services:
+
+  # ── API Node.js ─────────────────────────────────────────────────────────────
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src     # Bind mount : hot reload du code source
+      - api-logs:/app/logs # Volume nommé : logs persistants
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_HOST=db          # nom du service postgres dans ce compose
+      - DB_PORT=5432
+      - DB_NAME=todo_db
+      - DB_USER=todo_user
+      - DB_PASSWORD=todo_pass
+    depends_on:
+      - db                  # démarre après db (ne garantit pas que Postgres est prêt)
+    restart: on-failure     # relance si crash (pendant le retry de connexion)
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: todo_user
+      POSTGRES_PASSWORD: todo_pass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Persistance BDD
+    ports:
+      - "5432:5432"
+
+# ── Volumes nommés gérés par Docker ───────────────────────────────────────────
+volumes:
+  postgres-data:  # Données PostgreSQL
+  api-logs:        # Logs de l'API Node
+  todo-logs:       # Volume externe partagé pour l'exercice 1
+    external: true
