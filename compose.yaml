@@ -24,8 +24,9 @@ services:
       - DB_USER=todo_user
       - DB_PASSWORD=todo_pass
     depends_on:
-      - db                  # démarre après db (ne garantit pas que Postgres est prêt)
-    restart: on-failure     # relance si crash (pendant le retry de connexion)
+      db:
+        condition: service_healthy # démarre seulement quand db est prête et saine
+    restart: on-failure
 
   # ── PostgreSQL ──────────────────────────────────────────────────────────────
   db:
@@ -34,6 +35,12 @@ services:
       POSTGRES_DB: todo_db
       POSTGRES_USER: todo_user
       POSTGRES_PASSWORD: todo_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todo_user -d todo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     volumes:
       - postgres-data:/var/lib/postgresql/data  # Persistance BDD
     ports:

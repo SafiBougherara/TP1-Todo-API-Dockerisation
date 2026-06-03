@@ -32,8 +32,8 @@ POST http://localhost:3000/api/tasks
 Content-Type: application/json
 
 {
-  "title": "Faire le README",
-  "description": "Documenter le projet",
+  "title": "Faire un gateau",
+  "description": "Un bon gateau au chocolat",
   "status": "done"
 }
 
