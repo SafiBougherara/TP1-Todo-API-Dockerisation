@@ -1,20 +1,20 @@
-# Utilisation d'une image de base Node.js
-FROM node:18
+# ── Image de base légère Node.js 18 ──────────────────────────────────────────
+FROM node:18-alpine
 
-# Création du répertoire de travail dans le conteneur
+# Répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copie des fichiers du projet dans le conteneur
+# Copie des manifests en premier (meilleur cache des layers)
 COPY package*.json ./
 
-# Installation des dépendances
-RUN npm install
+# Installation des dépendances de production uniquement
+RUN npm ci --only=production
 
-# Copie du reste des fichiers dans le conteneur
+# Copie du reste du code source
 COPY . .
 
-# Exposition du port utilisé par l'application
+# Port exposé par l'application
 EXPOSE 3000
 
-# Commande pour démarrer l'application
-CMD ["npm", "start"]
+# Démarrage de l'application
+CMD ["node", "server.js"]
