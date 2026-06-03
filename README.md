@@ -92,7 +92,14 @@ docker run -p 3000:3000 \
 
 ---
 
-## Exemples de requêtes
+## Tester l'API
+
+Un fichier [`requests.http`](./requests.http) est disponible à la racine du projet.
+Il contient toutes les requêtes prêtes à l'emploi pour l'extension **REST Client** de VS Code.
+
+> Installe l'extension **REST Client** dans VS Code, ouvre `requests.http` et clique sur `Send Request` au-dessus de chaque requête.
+
+### Exemples de requêtes (curl)
 
 ```bash
 # Créer une tâche
