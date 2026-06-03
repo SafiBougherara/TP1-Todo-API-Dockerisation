@@ -1,0 +1,13 @@
+# Correction : Image de base Alpine beaucoup plus légère (~110MB contre ~900MB)
+FROM node:18-alpine
+WORKDIR /app
+
+# Utiliser npm ci pour une installation propre et déterministe
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copier le code source réel (pas de build dist/ sur ce projet, execution de server.js)
+COPY . .
+
+EXPOSE 3000
+CMD ["node", "server.js"]

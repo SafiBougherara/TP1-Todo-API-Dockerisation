@@ -1,0 +1,12 @@
+FROM node:18-alpine
+WORKDIR /app
+
+# Correction : Copier package.json en premier pour exploiter le cache de build Docker
+COPY package*.json ./
+RUN npm install
+
+# Copier le reste des sources seulement après l'installation
+COPY . .
+
+EXPOSE 3000
+CMD ["node", "server.js"]

@@ -1,0 +1,14 @@
+FROM node:18-alpine
+WORKDIR /app
+
+# On copie d'abord package.json (séparément pour le cache Docker)
+COPY package.json ./
+RUN npm install
+
+# Correction de l'erreur de syntaxe 'COPY..' par 'COPY . .'
+COPY . .
+
+EXPOSE 3000
+
+# Correction : Forme exec de CMD pour propager correctement les signaux OS (SIGTERM)
+CMD ["npm", "start"]
