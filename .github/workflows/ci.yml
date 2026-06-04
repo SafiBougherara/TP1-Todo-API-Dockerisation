@@ -87,3 +87,25 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           docker push ${{ secrets.DOCKERHUB_USER }}/todo-api:$SHORT_SHA
           docker push ${{ secrets.DOCKERHUB_USER }}/todo-api:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+
+      - name: Set image in deployment
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          kubectl set image deployment/todo-api todo-api=${{ secrets.DOCKERHUB_USER }}/todo-api:$SHORT_SHA
+
+      - name: Wait for rollout to complete
+        run: |
+          kubectl rollout status deployment/todo-api
