@@ -63,8 +63,22 @@ jobs:
       - name: Run integration tests
         run: npm run test:integration
 
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Run npm audit
+        run: npm audit --audit-level=critical
+
   build-and-push:
-    needs: [test-unit, test-integration]
+    needs: [test-unit, test-integration, security-scan]
     runs-on: ubuntu-latest
     if: github.ref_name == 'master'
     steps:
