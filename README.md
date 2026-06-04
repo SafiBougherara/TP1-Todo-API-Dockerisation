@@ -7,7 +7,7 @@
 `bougherarasafi/todo-api`
 
 ## Déploiement
-Voir [DEPLOYMENT.md](file:///c:/Users/bough/Documents/ECOLE/bachelor/mini%20tp%20js%20docker/DEPLOYMENT.md)
+Voir [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 <img width="1915" height="795" alt="image" src="https://github.com/user-attachments/assets/1396e2fa-b1f7-44b0-bc5b-af0439a37d2a" />
 
