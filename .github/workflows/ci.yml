@@ -7,11 +7,20 @@ on:
     branches: [ "master" ]
 
 jobs:
-  setup-check:
+  test-unit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Phase 0 Setup check
-        run: echo "Phase 0 Setup OK on GitHub Actions"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
