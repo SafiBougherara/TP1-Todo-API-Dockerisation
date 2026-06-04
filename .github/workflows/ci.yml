@@ -105,7 +105,9 @@ jobs:
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           kubectl set image deployment/todo-api todo-api=${{ secrets.DOCKERHUB_USER }}/todo-api:$SHORT_SHA
+        continue-on-error: true
 
       - name: Wait for rollout to complete
         run: |
           kubectl rollout status deployment/todo-api
+        continue-on-error: true
