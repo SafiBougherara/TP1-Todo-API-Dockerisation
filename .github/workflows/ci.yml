@@ -1,0 +1,17 @@
+name: Todo API CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  setup-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Phase 0 Setup check
+        run: echo "Phase 0 Setup OK on GitHub Actions"

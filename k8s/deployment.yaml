@@ -1,0 +1,4 @@
+# Manifeste Kubernetes pour le déploiement de la Todo API (Phase 4)
+# apiVersion: apps/v1
+# kind: Deployment
+# ...

@@ -3,3 +3,6 @@ node_modules
 *.log
 npm-debug.log*
 coverage/
+TP_sujet.md
+TP2_sujet.md
+TP3_sujet.md
