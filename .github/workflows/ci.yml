@@ -62,3 +62,25 @@ jobs:
 
       - name: Run integration tests
         run: npm run test:integration
+
+  build-and-push:
+    needs: [test-unit, test-integration]
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/todo-api:$SHORT_SHA -t ${{ secrets.DOCKERHUB_USER }}/todo-api:latest .
+
+      - name: Push Docker image
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          docker push ${{ secrets.DOCKERHUB_USER }}/todo-api:$SHORT_SHA
+          docker push ${{ secrets.DOCKERHUB_USER }}/todo-api:latest
